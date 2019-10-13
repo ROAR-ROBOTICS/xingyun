@@ -1,6 +1,7 @@
 # C++ Boilerplate
-[![Build Status](https://travis-ci.org/dpiet/cpp-boilerplate.svg?branch=master)](https://travis-ci.org/dpiet/cpp-boilerplate)
-[![Coverage Status](https://coveralls.io/repos/github/dpiet/cpp-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/dpiet/cpp-boilerplate?branch=master)
+[![Build Status](https://travis-ci.com/jingCGM/xingyun.svg?branch=master)](https://travis-ci.com/jingCGM/xingyun)
+[![Coverage Status](https://coveralls.io/repos/github/jingCGM/xingyun/badge.svg)](https://coveralls.io/github/jingCGM/xingyun)
+![GitHub](https://img.shields.io/github/license/jingCGM/xingyun)
 ---
 
 ## Overview
@@ -12,7 +13,7 @@ Simple starter C++ project with:
 
 ## Standard install via command-line
 ```
-git clone --recursive https://github.com/dpiet/cpp-boilerplate
+git clone https://github.com/jingCGM/xingyun.git
 cd <path to repository>
 mkdir build
 cd build
