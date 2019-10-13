@@ -1,8 +1,9 @@
 #include <iostream>
-#include <lib.hpp>
+#include "Obstacle.hpp"
+#include "Human.hpp"
+#include "Xingyun.hpp"
 
 int main()
 {
-    dummy();
     return 0;
 }
