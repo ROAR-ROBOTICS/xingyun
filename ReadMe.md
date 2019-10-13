@@ -9,10 +9,15 @@
 Xingyun is a software module which uses data from a 2D LIDAR to detect humans near a robot and give their relative locations in the robot’s reference frame. The purpose is to allow a robot to evoke appropriate behaviour in the vicinity of humans. 
 
 The 2D LIDAR used in the module has the following parameters:
+
 Resolution: 0.01m
+
 Range: [0.1m, 4m]
+
 FOV: 240 degrees
+
 Updating frequency: 40 fps
+
 Gaussian Noise: 0.0 mean, 0.02 standard variance
 
 The module will only operate on one frame of data. The input of the module is a point cloud in the form of a vector with 512 elements. Each element represents a receptor of the LIDAR and contains the detected distance of a point. The output of the module is a new vector with the detected human locations and orientations in Cartesian coordinates in the robot’s reference frame, along with a visualization that shows the robot, human centroids and safety boundaries.
