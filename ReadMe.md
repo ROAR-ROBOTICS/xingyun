@@ -37,7 +37,9 @@ The final part of the module is an optionally run function that uses the MatPlot
 
 ## Personnel
 Zuyang Cao: Student at the University of Maryland, Masters in Robotics
+
 Hao Da (Kevin) Dong: Student at the University of Maryland, Masters in Systems Engineering
+
 Jing Liang: Student at the University of Maryland, Masters in Robotics
 
 
