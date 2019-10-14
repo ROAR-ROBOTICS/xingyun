@@ -36,6 +36,10 @@
    * @return humanList - The detected human list.
    */
   std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename){
+    Human person;
+    person.centroid.push_back(2.0);
+    person.centroid.push_back(0.0);
+    humanList.push_back(person);
     return humanList;
   }
 
