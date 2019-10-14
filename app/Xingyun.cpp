@@ -10,98 +10,79 @@
 #include<iostream>
 #include<vector>
 #include<string>
-#include"Obstacle.hpp"
-#include"Human.hpp"
+#include <Obstacle.hpp>
+#include <Human.hpp>
+#include <Xingyun.hpp>
 
-class Xingyun{
- private:
-  /** @brief Raw Lidar distances data read from data file. */
-  std::vector<double> rawLidarDistances;
-
-  /** @brief Point cloud data converted into polar coordinate. */
-  std::vector<std::vector<double>> pointCloudPolar;
-
-  /** @brief Point cloud data converted into Cartesian coordinate. */
-  std::vector<std::vector<double>> pointCloudCartesian;
-
-  /** @brief List to store obstacles. */
-  std::vector<Obstacle> obstacleList;
-
-  /** @brief List to store detected legs. */
-  std::vector<Obstacle> legList;
-
-  /** @brief List to store detected humans. */
-  std::vector<Human> humanList;
 
   /** @brief Read data and classify the points into obstacles. */
-  void obstacleClassification(){
+  void Xingyun::obstacleClassification(){
     return;
   }
 
   /** @brief Recognize legs among obstacles. */
-  void legRecognition(){
+  void Xingyun::legRecognition(){
     return;
   }
 
   /** @brief Recognize humans from legs. */
-  void humanRecognition(){
+  void Xingyun::humanRecognition(){
     return;
   }
 
- public:
   /**
    * @brief Main function to detect human.
    * @param lidarDatasetFilename - Name of the data-set.
    * @return humanList - The detected human list.
    */
-  std::vector<Human> humanPerception(std::string lidarDatasetFilename){
+  std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename){
     return humanList;
   }
 
   /** @brief Show the output map. */
-  void visualization(){
+  void Xingyun::visualization(){
     return;
   }
 
   /** @brief Get rawLidarDistances.
    *  @return rawLidarDistances - Raw data.
    */
-  std::vector<double> getRawLidarDistances(){
+  std::vector<double> Xingyun::getRawLidarDistances(){
     return rawLidarDistances;
   }
 
   /** @brief Get pointCloudPolar.
    *  @return pointCloudPolar - Converted data in Polar coordinate.
    */
-  std::vector<std::vector<double>> getPointCloudPolar(){
+  std::vector<std::vector<double>> Xingyun::getPointCloudPolar(){
     return pointCloudPolar;
   }
 
   /** @brief Get pointCloudCartesian.
    *  @return pointCloudCartesian - Converted data in Cartesian coordinate.
    */
-  std::vector<std::vector<double>> getPointCloudCartesian(){
+  std::vector<std::vector<double>> Xingyun::getPointCloudCartesian(){
     return pointCloudCartesian;
   }
 
   /** @brief Get obstacleList.
    *  @return obstacleList - List of obstacles.
    */
-  std::vector<Obstacle> getObstacleList(){
+  std::vector<Obstacle> Xingyun::getObstacleList(){
     return obstacleList;
   }
 
   /** @brief Get legList.
    *  @return legList - List of legs.
    */
-  std::vector<Obstacle> getLegList(){
+  std::vector<Obstacle> Xingyun::getLegList(){
     return legList;
   }
 
   /** @brief Get humanList.
    *  @return humanList - List of humans.
    */
-  std::vector<Human> getHumanList(){
+  std::vector<Human> Xingyun::getHumanList(){
     return humanList;
   }
-};
+

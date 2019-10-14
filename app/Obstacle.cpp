@@ -9,21 +9,6 @@
 
 #include<iostream>
 #include<vector>
+#include <Obstacle.hpp>
 
-class Obstacle{
- public:
-  /** @brief The left most point in the obstacle cluster. */
-  std::vector<double> leftMostPoint;
 
-  /** @brief The right most point in the obstacle cluster. */
-  std::vector<double> rightMostPoint;
-
-  /** @brief The midpoint in the obstacle cluster. */
-  std::vector<double> midpoint;
-
-  /** @brief The largest gradient in the obstacle cluster. */
-  double largestGrad;
-
-  /** @brief The smallest gradient in the obstacle cluster. */
-  double smallestGrad;
-};

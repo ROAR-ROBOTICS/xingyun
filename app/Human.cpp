@@ -9,12 +9,5 @@
 
 #include<iostream>
 #include<vector>
+#include <Human.hpp>
 
-class Human{
- public:
-  /** @brief The centroid of a possible human obstacle. */
-  std::vector<double> centroid;
-
-  /** @brief The orientation angle of a possible human obstacle. */
-  double orientationAngle;
-};
