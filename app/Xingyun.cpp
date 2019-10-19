@@ -15,8 +15,8 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
-
-#define PI 3.14159265
+#include "matplotlibcpp.h"
+namespace plt = matplotlibcpp;
 
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
@@ -43,7 +43,7 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
   std::ifstream is(lidarDatasetFilename);
   std::istream_iterator<double> start(is), end;
   std::vector<double> tmpList(start, end);
-  rawLidarDistances = tmpList;
+  rawLidarDistances = tmpList;  // Load raw data in vector;
   std::vector<double> degList;
   double degDelt = 240.0 / 512.0;
   for (int i = 0; i < 512; i++) {
@@ -55,14 +55,15 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
   std::vector<double> yList;
   for (int i = 0; i < 512; i++) {
     double cartX = pointCloudPolar[1][i]
-        * cos(pointCloudPolar[0][i] * PI / 180.0);
+        * cos(pointCloudPolar[0][i] * M_PI / 180.0);
     double cartY = pointCloudPolar[1][i]
-        * sin(pointCloudPolar[0][i] * PI / 180.0);
+        * sin(pointCloudPolar[0][i] * M_PI / 180.0);
     xList.emplace_back(cartX);
     yList.emplace_back(cartY);
   }
   pointCloudCartesian.emplace_back(xList);
   pointCloudCartesian.emplace_back(yList);
+  // Start classification and recognition.
   obstacleClassification();
   legRecognition();
   humanRecognition();
@@ -71,6 +72,26 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 
 /** @brief Show the output map. */
 void Xingyun::visualization() {
+  plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
+  double humanWidth = 0.8;  // Human width, adjust here.
+  double humanThick = 0.3;  // Human thickness, adjust here.
+  for (auto human : humanList) {
+    plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
+    double orientation = human.orientationAngle;  // Human orientation in degree, x axis(pointing to the right) is 0 degree.
+    int n = 500;
+    std::vector<double> x(n), y(n);
+    for (int i = 0; i < n; ++i) {
+      double t = 2 * M_PI * i / n;
+      x.at(i) = humanThick * cos(t) * cos(orientation / 180.0 * M_PI)
+              - humanWidth * sin(t) * sin(orientation / 180.0 * M_PI) + human.centroid[0];
+      y.at(i) = humanThick * cos(t) * sin(orientation / 180.0 * M_PI)
+              + humanWidth * sin(t) * cos(orientation / 180.0 * M_PI) + human.centroid[1];
+    }
+    plt::plot(x, y, "r-");  // Plot human as ellipse.
+  }
+  plt::xlim(-4, 4);
+  plt::ylim(-4, 4);
+  plt::show();
   return;
 }
 
