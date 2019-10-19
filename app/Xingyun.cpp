@@ -15,7 +15,7 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
-#include "matplotlibcpp.h"
+#include <matplotlibcpp.h>
 namespace plt = matplotlibcpp;
 
 /** @brief Read data and classify the points into obstacles. */
@@ -43,8 +43,8 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
   std::ifstream is(lidarDatasetFilename);
   std::istream_iterator<double> start(is), end;
   std::vector<double> tmpList(start, end);
-  rawLidarDistances = tmpList;  // Load raw data in vector;
-  std::vector<double> degList;
+  rawLidarDistances = tmpList;  // Load raw data in double vector.
+  std::vector<double> degList;  // First line in Polar data set.
   double degDelt = 240.0 / 512.0;
   for (int i = 0; i < 512; i++) {
     degList.emplace_back(-120.0 + degDelt * i);
