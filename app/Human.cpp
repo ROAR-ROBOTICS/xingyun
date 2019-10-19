@@ -5,8 +5,6 @@
  *             The class will be used in Xingyun class.
  * @license    This project is released under the BSD-3-Clause License.
  */
-#pragma once
-
 #include<iostream>
 #include<vector>
 #include <Human.hpp>
