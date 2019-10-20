@@ -9,6 +9,7 @@
 #include <vector>
 #include <iterator>
 #include <fstream>
+#include <sstream>
 #include <math.h>
 #include <algorithm>
 #include <string>
@@ -39,30 +40,18 @@ void Xingyun::humanRecognition() {
  * @return humanList - The detected human list.
  */
 std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
-  Human person;
-  std::ifstream is(lidarDatasetFilename);
-  std::istream_iterator<double> start(is), end;
-  std::vector<double> tmpList(start, end);
-  rawLidarDistances = tmpList;  // Load raw data in double vector.
-  std::vector<double> degList;  // First line in Polar data set.
-  double degDelt = 240.0 / 512.0;
-  for (int i = 0; i < 512; i++) {
-    degList.emplace_back(-120.0 + degDelt * i);
-  }
-  pointCloudPolar.emplace_back(degList);
-  pointCloudPolar.emplace_back(rawLidarDistances);
-  std::vector<double> xList;
-  std::vector<double> yList;
-  for (int i = 0; i < 512; i++) {
-    double cartX = pointCloudPolar[1][i]
-        * cos(pointCloudPolar[0][i] * M_PI / 180.0);
-    double cartY = pointCloudPolar[1][i]
-        * sin(pointCloudPolar[0][i] * M_PI / 180.0);
-    xList.emplace_back(cartX);
-    yList.emplace_back(cartY);
-  }
-  pointCloudCartesian.emplace_back(xList);
-  pointCloudCartesian.emplace_back(yList);
+
+	// load lidar data from csv file to vector rawLidarDistances
+	std::ifstream fileStream(lidarDatasetFilename);
+	std::string item;
+	while(std::getline(fileStream, item,',')) {
+		double value;
+		std::stringstream readString;
+		readString << item;
+		readString >> value;
+		rawLidarDistances.push_back(value);
+	}
+
   // Start classification and recognition.
   obstacleClassification();
   legRecognition();
