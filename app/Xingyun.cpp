@@ -13,6 +13,9 @@
 #include <math.h>
 #include <algorithm>
 #include <string>
+#include <boost/range/combine.hpp>
+#include <boost/tuple/tuple.hpp>
+
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
@@ -57,6 +60,17 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	std::generate(angles.begin(), angles.end(), calculateAngle);
 	pointCloudPolar.push_back(rawLidarDistances);
 	pointCloudPolar.push_back(angles);
+
+	//converte polar coordinates to cartesian coordinates
+	std::vector<double> xValues,yValues;
+	for(auto const& tupleValue: boost::combine(rawLidarDistances, angles)) {
+		double distance,angle;
+		boost::tie(distance,angle) = tupleValue;
+		xValues.push_back(distance * cos(angle));
+		yValues.push_back(distance * sin(angle));
+	}
+	pointCloudCartesian.push_back(xValues);
+	pointCloudCartesian.push_back(yValues);
 
 	// Start classification and recognition.
 	obstacleClassification();
