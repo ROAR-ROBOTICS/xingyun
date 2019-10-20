@@ -23,7 +23,12 @@
 namespace plt = matplotlibcpp;
 
 #define LIDAR_RANGE 3.9
-#define CLUSTER_THRESHOLD 2
+#define CLUSTER_THRESHOLD 0.5
+#define LEG_DIAMETER 0.2
+#define LEG_DISTANCE 0.3
+#define MAJOR_AXIS 0.6
+#define MINOR_AXIS 0.4
+#define GRAD_DIFF_THRESHOLD 0.1
 
 /**
  * @brief The function is used to generate angles in polar coordinates
