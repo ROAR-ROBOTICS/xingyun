@@ -24,7 +24,70 @@ namespace plt = matplotlibcpp;
 
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
-  return;
+
+	double preDistance = rawLidarDistances[0];
+	std::vector<double> xList,yList,distanceList;
+	std::vector<std::vector<double>> objectBufferX,objectBufferY;
+	std::vector<std::vector<std::vector<double>>> objects;
+	
+	// point cloud classification
+	for(auto const& tupleValue: boost::combine(rawLidarDistances,pointCloudCartesian[0],pointCloudCartesian[1])) {
+		double distance, x, y;
+		boost::tie(distance,x,y) = tupleValue;
+
+		if (abs(distance - preDistance)>= CLUSTER_THRESHOLD) {
+			if (distanceList.size()>0) {
+				if (distanceList[0] < LIDAR_RANGE){
+					objectBufferX.push_back(xList);
+					objectBufferY.push_back(yList);
+				}
+				xList.clear();
+				yList.clear();
+				distanceList.clear();
+			}
+		}
+		preDistance = distance;
+		xList.push_back(x);
+		yList.push_back(y);
+		distanceList.push_back(distance);
+	}
+	if (distanceList.size()>0) {
+		if (distanceList[0] < LIDAR_RANGE){
+			objectBufferX.push_back(xList);
+			objectBufferY.push_back(yList);
+		}
+	}
+
+	// extract information needed for obstacle object
+	for(auto const& tupleValue: boost::combine(objectBufferX, objectBufferY)) {
+		std::vector<double> xTempList,yTempList,cartesianVector;
+		Obstacle obstacleValue;
+
+		boost::tie(xTempList,yTempList) = tupleValue;
+		obstacleValue.rightMostPoint = {*(xTempList.end()-1),*(yTempList.end()-1)};
+		obstacleValue.leftMostPoint =  {*xTempList.begin(),*yTempList.begin()};
+		obstacleValue.midPoint = {(*xTempList.begin()+*(xTempList.end()-1))/2, (*(yTempList.end()-1)+*yTempList.begin())/2 };
+
+		std::vector<double> gradiences;
+		auto const tupleCombination = boost::combine(xTempList, yTempList);
+		for(auto beginIndex = tupleCombination.begin();beginIndex<tupleCombination.end()-1;beginIndex++) {
+			double x,y,nextX,nextY;
+			boost::tie(x,y) = *beginIndex;
+			boost::tie(nextX,nextY) = *(beginIndex+1);
+
+			double gradience;
+			if ((nextX-x)==0) gradience = 9999;
+			else gradience = (nextY-y)/(nextX-x);
+			if (gradience>9999) gradience = 9999;
+			gradiences.push_back(gradience);
+		}
+		obstacleValue.largestGrad = *std::max_element(gradiences.begin(),gradiences.end());
+		obstacleValue.smallestGrad = *std::min_element(gradiences.begin(),gradiences.end());
+
+		obstacleList.push_back(obstacleValue);
+	}
+
+	return;
 }
 
 /** @brief Recognize legs among obstacles. */
@@ -76,6 +139,7 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	obstacleClassification();
 	legRecognition();
 	humanRecognition();
+	
 	return humanList;
 }
 
