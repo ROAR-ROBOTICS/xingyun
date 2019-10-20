@@ -22,6 +22,22 @@
 #include <matplotlibcpp.h>
 namespace plt = matplotlibcpp;
 
+#define LIDAR_RANGE 3.9
+#define CLUSTER_THRESHOLD 2
+
+/**
+ * @brief The function is used to generate angles in polar coordinates
+ * @param none
+ * @return angle - The calculated angle for the point.
+ */
+double calculateAngle() {
+	static double i=0;
+	double angle = (-120+i*240/512)*M_PI/180;
+	i++;
+	return angle;
+}
+
+
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
 
@@ -139,7 +155,7 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	obstacleClassification();
 	legRecognition();
 	humanRecognition();
-	
+
 	return humanList;
 }
 

@@ -19,7 +19,7 @@ class Obstacle{
   std::vector<double> rightMostPoint;
 
   /** @brief The midpoint in the obstacle cluster. */
-  std::vector<double> midpoint;
+  std::vector<double> midPoint;
 
   /** @brief The largest gradient in the obstacle cluster. */
   double largestGrad;
