@@ -52,11 +52,17 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 		rawLidarDistances.push_back(value);
 	}
 
-  // Start classification and recognition.
-  obstacleClassification();
-  legRecognition();
-  humanRecognition();
-  return humanList;
+	//get polar data from raw lidar data
+	std::vector<double> angles(512) ; // vector with 100 ints.
+	std::generate(angles.begin(), angles.end(), calculateAngle);
+	pointCloudPolar.push_back(rawLidarDistances);
+	pointCloudPolar.push_back(angles);
+
+	// Start classification and recognition.
+	obstacleClassification();
+	legRecognition();
+	humanRecognition();
+	return humanList;
 }
 
 /** @brief Show the output map. */
