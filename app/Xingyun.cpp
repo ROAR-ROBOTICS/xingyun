@@ -20,6 +20,7 @@
 #include <Human.hpp>
 #include <Xingyun.hpp>
 #include <matplotlibcpp.h>
+
 namespace plt = matplotlibcpp;
 
 #define LIDAR_RANGE 3.9
@@ -113,7 +114,21 @@ void Xingyun::obstacleClassification() {
 
 /** @brief Recognize legs among obstacles. */
 void Xingyun::legRecognition() {
-  return;
+    double obstacleLength = 0;   // Length of obstacle contour
+
+    // Check each obstacle in obstacleList
+    for (auto const obstacle : obstacleList) {
+        // Check gradient constraint
+        if (obstacle.largestGrad - obstacle.smallestGrad > GRAD_DIFF_THRESHOLD) {
+            // Calculate length of obstacle contour
+            obstacleLength = sqrt(pow(obstacle.rightMostPoint[0] - obstacle.leftMostPoint[0], 2)
+                                    + pow(obstacle.rightMostPoint[1] - obstacle.leftMostPoint[1], 2));
+
+            // Check diameter constraint. Add obstacle to legList if it passes both constraints.
+            if (obstacleLength < LEG_DIAMETER)
+                legList.push_back(obstacle);
+        }
+    }
 }
 
 /** @brief Recognize humans from legs. */
