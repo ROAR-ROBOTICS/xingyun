@@ -101,7 +101,7 @@ bool testSideObstacle(Obstacle groundTruth, Obstacle testingData) {
  */
 TEST(testSideHumanPositionX, shouldPass) {
   Xingyun xingyun;
-  std::string fileName = "dataset/test_single.csv";
+  std::string fileName = "../dataset/test_single.csv";
   std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
   std::vector<double> midpoint = humanInfo[0].centroid;
 
@@ -116,7 +116,7 @@ TEST(testSideHumanPositionX, shouldPass) {
  */
 TEST(testSideHumanPositionY, shouldPass) {
   Xingyun xingyun;
-  std::string fileName = "dataset/test_single.csv";
+  std::string fileName = "../dataset/test_single.csv";
   std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
   std::vector<double> midpoint = humanInfo[0].centroid;
 
@@ -132,7 +132,7 @@ TEST(testSideHumanPositionY, shouldPass) {
  */
 TEST(testSideHumanPoseYaw, shouldPass) {
   Xingyun xingyun;
-  std::string fileName = "dataset/test_single.csv";
+  std::string fileName = "../dataset/test_single.csv";
   std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
   double orientationAngle = humanInfo[0].orientationAngle;
 std::cout<<"orientation: "<<orientationAngle<<std::endl;
@@ -151,7 +151,7 @@ std::cout<<"orientation: "<<orientationAngle<<std::endl;
  */
 TEST(testSideObstacles, shouldPass) {
 	Xingyun xingyun;
-	std::string fileName = "dataset/test_single.csv";
+	std::string fileName = "../dataset/test_single.csv";
 	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
 	Obstacle groundTruth;
 	groundTruth.largestGrad = 2.07;
@@ -175,7 +175,7 @@ TEST(testSideObstacles, shouldPass) {
  */
 TEST(testSideLegs, shouldPass) {
 	Xingyun xingyun;
-	std::string fileName = "dataset/test_single.csv";
+	std::string fileName = "../dataset/test_single.csv";
 	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
 
 	Obstacle groundTruth;
@@ -201,7 +201,7 @@ TEST(testSideLegs, shouldPass) {
  */
 TEST(testSidePolar, shouldPass) {
 
-	std::ifstream file("dataset/polar_0.csv");
+	std::ifstream file("../dataset/polar_0.csv");
 	if (! file) {
 		std::cout << "Error, file couldn't be opened" << std::endl;
 	}
@@ -222,7 +222,7 @@ TEST(testSidePolar, shouldPass) {
 	}
 
 	Xingyun xingyunSidePolar;
-	std::string fileName = "dataset/test_single.csv";
+	std::string fileName = "../dataset/test_single.csv";
 	std::vector<Human> humanInfo = xingyunSidePolar.humanPerception(fileName);
 
 	std::vector<std::vector<double>> testingData = xingyunSidePolar.getPointCloudPolar();
@@ -240,7 +240,7 @@ TEST(testSidePolar, shouldPass) {
  */
 TEST(testSideCartisian, shouldPass) {
 
-	std::ifstream file("dataset/cartesian_0.csv");
+	std::ifstream file("../dataset/cartesian_0.csv");
 	if (! file) {
 		std::cout << "Error, file couldn't be opened" << std::endl;
 	}
@@ -261,7 +261,7 @@ TEST(testSideCartisian, shouldPass) {
 	}
 
 	Xingyun xingyunSideCartesian;
-	std::string fileName = "dataset/test_single.csv";
+	std::string fileName = "../dataset/test_single.csv";
 	std::vector<Human> humanInfo = xingyunSideCartesian.humanPerception(fileName);
 
 	std::vector<std::vector<double>> testingData = xingyunSideCartesian.getPointCloudCartesian();

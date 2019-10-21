@@ -8,11 +8,33 @@
  */
 #pragma once
 
-#include<iostream>
-#include<vector>
-#include<string>
-#include"Obstacle.hpp"
-#include"Human.hpp"
+#include <iostream>
+#include <vector>
+#include <iterator>
+#include <fstream>
+#include <sstream>
+#include <math.h>
+#include <algorithm>
+#include <string>
+#include <boost/range/combine.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/range/irange.hpp>
+
+#include <Obstacle.hpp>
+#include <Human.hpp>
+
+//#include <matplotlibcpp.h>
+//
+//namespace plt = matplotlibcpp;
+
+#define LIDAR_RANGE 3.9
+#define CLUSTER_THRESHOLD 0.5
+#define LEG_DIAMETER 0.2
+#define LEG_DISTANCE 0.3
+#define MAJOR_AXIS 0.6
+#define MINOR_AXIS 0.4
+#define GRAD_DIFF_THRESHOLD 0.1
+
 
 class Xingyun{
     private:
