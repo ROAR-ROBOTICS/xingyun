@@ -209,7 +209,7 @@ void Xingyun::humanRecognition() {
             processSidewaysHuman(temp);
         }
     }
-    
+
     if (queue.empty() == false) {
         std::vector<Obstacle> temp;
         temp.push_back(queue.front());
@@ -268,8 +268,6 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 /** @brief Show the output map. */
 void Xingyun::visualization() {
     plt::plot({ 0 }, { 0 }, "bs");  // Show robot as square at origin.
-    //double humanWidth = 0.8;  // Human width, adjust here.
-    //double humanThick = 0.3;  // Human thickness, adjust here.
     for (auto human : humanList) {
            plt::plot({ human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
            double orientation = human.orientationAngle;  // Human orientation radians, x-axis (pointing to the right) is 0 radians
