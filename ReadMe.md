@@ -87,6 +87,15 @@ make
 ```
 This will clone the repository, create a build directory, run CMake and build the source code.
 
+## Run Doxygen File
+To install Doxygen
+```
+sudo apt install doxygen
+```
+To generate the Doxygen documentation
+```
+doxygen ./doxygen
+````
 
 ## Run Unit Tests
 To run our unit tests (optional), execute the following command within the build directory:
