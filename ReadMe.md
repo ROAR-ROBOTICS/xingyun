@@ -46,6 +46,7 @@ The final part of the module is an optionally run function that uses the MatPlot
 
 Sample visualization results of some of the default demonstration scenarios can be found in dataset/demos/sample_results/. Please refer to the Run Demonstration Program section on how to interpret the pictures.
 
+![Output Sample](https://github.com/jingCGM/xingyun/tree/master/dataset/combined_case_1.png)
 
 ## Personnel
 Zuyang Cao: Student at the University of Maryland, Masters in Robotics
