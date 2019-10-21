@@ -26,12 +26,12 @@
 namespace plt = matplotlibcpp;
 
 #define LIDAR_RANGE 3.9
-#define CLUSTER_THRESHOLD 0.5
+#define CLUSTER_THRESHOLD 0.3
 #define LEG_DIAMETER 0.4
 #define LEG_DISTANCE 0.3
 #define MAJOR_AXIS 0.6
 #define MINOR_AXIS 0.4
-#define GRAD_DIFF_THRESHOLD 0.1
+#define GRAD_DIFF_THRESHOLD 3
 
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
