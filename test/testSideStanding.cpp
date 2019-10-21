@@ -16,6 +16,82 @@
 #include <sstream>
 #include <iterator>
 #include <string>
+#include <boost/range/combine.hpp>
+#include <boost/tuple/tuple.hpp>
+
+/**
+ * @brief test if the 1D vector is within tolerance comparing with ground truth
+ * @param testingData, which is vector used to be tested
+ * @param groundTruth of the 1D vector
+ * @param tolerance, which is tolerance for each value
+ * @return bool value showing if the vector is near ground truth
+ */
+bool testSide1DVectors(std::vector<double> testingData, std::vector<double> groundTruth,double tolerance) {
+	bool condition = true;
+	for(auto const& tupleValue: boost::combine(testingData,groundTruth)) {
+		double x, y;
+		boost::tie(x,y) = tupleValue;
+		if (abs(x-y)>tolerance) condition = false;
+	}
+	return condition;
+}
+
+/**
+ * @brief test if the 2D vector is within tolerance comparing with ground truth
+ * @param testingData, which is vector used to be tested
+ * @param groundTruth of the 2D vector
+ * @param tolerance, which is tolerance for each value
+ * @return bool value showing if the vector is near ground truth
+ */
+bool testSide2DVectors(std::vector<std::vector<double>> testingData, std::vector<std::vector<double>> groundTruth,double tolerance) {
+	bool condition = true;
+	condition &= testSide1DVectors(testingData[0], groundTruth[0],tolerance);
+	condition &= testSide1DVectors(testingData[1], groundTruth[1],tolerance);
+	return condition;
+}
+
+/**
+ * @brief function to compare two Obstacle objects
+ * @param Obstacle object of ground truth
+ * @param Obstacle object of testing data
+ * @return judgement if obstacle is same as groundtruth
+ */
+bool testSideObstacle(Obstacle groundTruth, Obstacle testingData) {
+	bool returnValue = true;
+	double tolerance = 0.01;
+
+	// test if left point is right
+	if(!testSide1DVectors(testingData.leftMostPoint,groundTruth.leftMostPoint,tolerance)) {
+		returnValue = false;
+				std::cout<<"left most point is not right"<<std::endl;
+	}
+
+	// test if right point is right
+	if(!testSide1DVectors(testingData.rightMostPoint,groundTruth.rightMostPoint,tolerance)) {
+		returnValue = false;
+		std::cout<<"right most point is not right"<<std::endl;
+	}
+
+	// test if mid point is right
+	if(!testSide1DVectors(testingData.midPoint,groundTruth.midPoint,tolerance)) {
+		returnValue = false;
+		std::cout<<"middle point is not right"<<std::endl;
+	}
+
+	// test if max gradience is right
+	if (abs(testingData.largestGrad-groundTruth.largestGrad)>=tolerance) {
+		returnValue = false;
+		std::cout<<"largestGrad is not right"<<std::endl;
+	}
+
+	// test if min gradience is right
+	if (abs(testingData.smallestGrad-groundTruth.smallestGrad)>=tolerance) {
+		returnValue = false;
+		std::cout<<"smallestGrad is not right"<<std::endl;
+	}
+	return returnValue;
+}
+
 
 /**
  * @brief test value in x axis of detected human position
@@ -61,55 +137,11 @@ TEST(testSideHumanPoseYaw, shouldPass) {
   double orientationAngle = humanInfo[0].orientationAngle;
 
   EXPECT_NEAR(orientationAngle, 1.57,0.2);
-} 
-
-
-
-/**
- * @brief function to compare two Obstacle objects
- * @param Obstacle object of ground truth
- * @param Obstacle object of testing data
- * @return judgement if obstacle is same as groundtruth
- */
-bool testSideObstacle(Obstacle groundTruth, Obstacle testingData) {
-	bool returnValue = true;
-
-	// test if left point is right
-	if(testingData.leftMostPoint == groundTruth.leftMostPoint) {}
-	else {
-		returnValue = false;
-		std::cout<<"left most point is not right"<<std::endl;
-	}
-
-	// test if right point is right
-	if(testingData.rightMostPoint == groundTruth.rightMostPoint) {}
-	else {
-		returnValue = false;
-		std::cout<<"right most point is not right"<<std::endl;
-	}
-
-	// test if mid point is right
-	if(testingData.midPoint == groundTruth.midPoint) {}
-	else {
-		returnValue = false;
-		std::cout<<"middle point is not right"<<std::endl;
-	}
-
-	// test if max gradience is right
-	if(testingData.largestGrad == groundTruth.largestGrad) {}
-	else {
-		returnValue = false;
-		std::cout<<"largestGrad is not right"<<std::endl;
-	}
-
-	// test if min gradience is right
-	if(testingData.smallestGrad == groundTruth.smallestGrad) {}
-	else {
-		returnValue = false;
-		std::cout<<"smallestGrad is not right"<<std::endl;
-	}
-	return returnValue;
 }
+
+
+
+
 
 /**
  * @brief test if tested obstacle is right
@@ -123,8 +155,8 @@ TEST(testSideObstacles, shouldPass) {
 	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
 
 	Obstacle groundTruth;
-	groundTruth.largestGrad = 0.03;
-	groundTruth.smallestGrad = 0.01;
+	groundTruth.largestGrad = 2.07;
+	groundTruth.smallestGrad = -244.87;
 	groundTruth.leftMostPoint.push_back(1.90);
 	groundTruth.leftMostPoint.push_back(-0.17);
 	groundTruth.rightMostPoint.push_back(1.92);
@@ -133,6 +165,7 @@ TEST(testSideObstacles, shouldPass) {
 	groundTruth.midPoint.push_back(-0.12);
 
 	std::vector<Obstacle> testingData = xingyun.getObstacleList();
+
 	bool testCondition = testSideObstacle(groundTruth, testingData[0]);
 	EXPECT_EQ(testCondition,true);
 }
@@ -149,8 +182,8 @@ TEST(testSideLegs, shouldPass) {
 	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
 
 	Obstacle groundTruth;
-	groundTruth.largestGrad = 0.03;
-	groundTruth.smallestGrad = 0.01;
+	groundTruth.largestGrad = 2.07;
+	groundTruth.smallestGrad = -244.87;
 	groundTruth.leftMostPoint.push_back(1.90);
 	groundTruth.leftMostPoint.push_back(-0.17);
 	groundTruth.rightMostPoint.push_back(1.92);
@@ -162,7 +195,6 @@ TEST(testSideLegs, shouldPass) {
 	bool testCondition = testSideObstacle(groundTruth, testingData[0]);
 	EXPECT_EQ(testCondition,true);
 }
-
 
 /**
  * @brief test if polar data is right
@@ -192,12 +224,13 @@ TEST(testSidePolar, shouldPass) {
 		readPolar.push_back(readVector);
 	}
 
-	Xingyun xingyun;
+	Xingyun xingyunSidePolar;
 	std::string fileName = "dataset/test_single.csv";
-	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
+	std::vector<Human> humanInfo = xingyunSidePolar.humanPerception(fileName);
 
-	std::vector<std::vector<double>> testingData = xingyun.getPointCloudPolar();
-	bool testCondition = (testingData == readPolar);
+	std::vector<std::vector<double>> testingData = xingyunSidePolar.getPointCloudPolar();
+	bool testCondition = testSide2DVectors(testingData,readPolar,0.01);
+
 	EXPECT_EQ(testCondition,true);
 }
 
@@ -215,7 +248,7 @@ TEST(testSideCartisian, shouldPass) {
 		std::cout << "Error, file couldn't be opened" << std::endl;
 	}
 	std::string readRow, item;
-	std::vector<std::vector<double>> readPolar;
+	std::vector<std::vector<double>> readCartesian;
 
 	while(std::getline(file, readRow)) {
 		std::vector<double> readVector;
@@ -227,14 +260,15 @@ TEST(testSideCartisian, shouldPass) {
 			readString >> value;
 			readVector.push_back(value);
 		}
-		readPolar.push_back(readVector);
+		readCartesian.push_back(readVector);
 	}
 
-	Xingyun xingyun;
+	Xingyun xingyunSideCartesian;
 	std::string fileName = "dataset/test_single.csv";
-	std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
+	std::vector<Human> humanInfo = xingyunSideCartesian.humanPerception(fileName);
 
-	std::vector<std::vector<double>> testingData = xingyun.getPointCloudCartesian();
-	bool testCondition = (testingData == readPolar);
+	std::vector<std::vector<double>> testingData = xingyunSideCartesian.getPointCloudCartesian();
+
+	bool testCondition = testSide2DVectors(testingData,readCartesian,0.01);
 	EXPECT_EQ(testCondition,true);
 }
