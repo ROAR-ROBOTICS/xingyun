@@ -44,6 +44,8 @@ The list of legs is organized into pairs by evaluating which legs are in close p
 
 The final part of the module is an optionally run function that uses the MatPlotLib library to plot the robot, relative location of human centroids and safety boundaries on a 2D map in the robot’s reference frame.
 
+Sample visualization results of some of the default demonstration scenarios can be found in dataset/demos/sample_results/. Please refer to the Run Demonstration Program section on how to interpret the pictures.
+
 
 ## Personnel
 Zuyang Cao: Student at the University of Maryland, Masters in Robotics
@@ -54,7 +56,8 @@ Jing Liang: Student at the University of Maryland, Masters in Robotics
 
 
 ## License
-This project is licensed under the BSD 3-Clause. Please see LICENSE for additional details and disclaimer. Please note that include/matplotlibcpp.h is not developed by the authors, and thus does not contain a header indicating authorship and license terms.
+This project is licensed under the BSD 3-Clause. Please see LICENSE for additional details and disclaimer. 
+
 
 ## Agile Iterative Process (AIP) Logs and Notes
 AIP backlogs and work log:
@@ -110,6 +113,8 @@ Select any of the 7 default demo files, save, and rebuild the code. Pictures tha
 2) It was discovered through testing that the curvature contraint in legRecognition() that utilized gradient differences is not very robust. Thus, the more non-human obstacles are in the environment, the more difficulty the algorithm will have in correctly identifying legs from obstacles. An algorithm redesign will come with the next version of Xingyun.
 
 3) If it is desired to use Xingyun as a standalone module as part of a larger project without any visualization, Matplotlib is not required. Xingyun object can be instantiated as normal and only humanPerception() is required to generate a vector of Human objects with centroid and orientation information.
+
+4) Please note that include/matplotlibcpp.h is not developed by the authors, and thus does not contain a header indicating authorship and license terms. No changes were made to the file and thus it also does not pass cppcheck and cpplint format tests.
 
 
 ## Explanation of Commit Message Format Inconsistencies
