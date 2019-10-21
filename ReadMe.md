@@ -54,7 +54,7 @@ Jing Liang: Student at the University of Maryland, Masters in Robotics
 
 
 ## License
-This project is licensed under the BSD 3-Clause. Please see LICENSE for additional details and disclaimer.
+This project is licensed under the BSD 3-Clause. Please see LICENSE for additional details and disclaimer. Please note that include/matplotlibcpp.h is not developed by the authors, and thus does not contain a header indicating authorship and license terms.
 
 ## Agile Iterative Process (AIP) Logs and Notes
 AIP backlogs and work log:
@@ -101,9 +101,18 @@ The demonstration code is in app/main.cpp and uses CSV dataset files that are lo
 ```
 std::string fileName = "../dataset/demos/Case1.csv";
 ```
-Select any of the 10 default demo files, save, and rebuild the code.
+Select any of the 7 default demo files, save, and rebuild the code. Pictures that correspond to each of the scenarios are also included in dataset/demos/ that depict the ground truth. The visualization produced will show the robot (facing right) as a blue square at the center of the plot, along with the centroids and safety boundaries of the detected humans in red.
 
 
-## Known Issues
-The following issues may be observed when running the Xingyun module:
-1) 
+## Notes and Known Issues
+1) If a human is standing slanted enough such that the gap between its legs are not visible to the robot, the LIDAR will only see one "leg" and thus will identify a sideways human. In cases like this the orientation of the detected human will be less accurate than usual.
+
+2) It was discovered through testing that the curvature contraint in legRecognition() that utilized gradient differences is not very robust. Thus, the more non-human obstacles are in the environment, the more difficulty the algorithm will have in correctly identifying legs from obstacles. An algorithm redesign will come with the next version of Xingyun.
+
+3) If it is desired to use Xingyun as a standalone module as part of a larger project without any visualization, Matplotlib is not required. Xingyun object can be instantiated as normal and only humanPerception() is required to generate a vector of Human objects with centroid and orientation information.
+
+
+## Explanation of Commit Message Format Inconsistencies
+Due to inexperience, commit messages before October 14, 2019, do not follow any consistent format and lack the AIP task numbers that link them to the backlogs and work log. Since it is not possible to modify these messages, the authors have instead listed the task numbers as a comment to these commits. 
+
+Commit messages after October 14, 2019 follow a standardized format: [Files Changed][Task Number] "Message". The detailed messages often exceed the header limit set by GitHub, and thus the commits need to be clicked open to view the full messages.
