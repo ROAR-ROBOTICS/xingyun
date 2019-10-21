@@ -5,12 +5,13 @@
  *             The class will be used for detecting human from 2D Lidar data-sets.
  * @license    This project is released under the BSD-3-Clause License.
  */
+#include <matplotlibcpp.h>
+#include <math.h>
 #include <iostream>
 #include <vector>
 #include <iterator>
 #include <fstream>
 #include <sstream>
-#include <math.h>
 #include <algorithm>
 #include <string>
 #include <boost/range/combine.hpp>
@@ -20,7 +21,7 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
-#include <matplotlibcpp.h>
+
 
 namespace plt = matplotlibcpp;
 
@@ -34,20 +35,19 @@ namespace plt = matplotlibcpp;
 
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
-
     double preDistance = rawLidarDistances[0];
-    std::vector<double> xList,yList,distanceList;
-    std::vector<std::vector<double>> objectBufferX,objectBufferY;
+    std::vector<double> xList, yList, distanceList;
+    std::vector<std::vector<double>> objectBufferX, objectBufferY;
     std::vector<std::vector<std::vector<double>>> objects;
 
     // point cloud classification
-    for(auto const& tupleValue: boost::combine(rawLidarDistances,pointCloudCartesian[0],pointCloudCartesian[1])) {
+    for (auto const& tupleValue : boost::combine(rawLidarDistances, pointCloudCartesian[0], pointCloudCartesian[1])) {
         double distance, x, y;
-        boost::tie(distance,x,y) = tupleValue;
+        boost::tie(distance, x, y) = tupleValue;
 
-        if (abs(distance - preDistance)>= CLUSTER_THRESHOLD) {
-            if (distanceList.size()>0) {
-                if (distanceList[0] < LIDAR_RANGE){
+        if (abs(distance - preDistance) >= CLUSTER_THRESHOLD) {
+            if (distanceList.size() > 0) {
+                if (distanceList[0] < LIDAR_RANGE) {
                     objectBufferX.push_back(xList);
                     objectBufferY.push_back(yList);
                 }
@@ -61,39 +61,42 @@ void Xingyun::obstacleClassification() {
         yList.push_back(y);
         distanceList.push_back(distance);
     }
-    if (distanceList.size()>0) {
-        if (distanceList[0] < LIDAR_RANGE){
+    if (distanceList.size() > 0) {
+        if (distanceList[0] < LIDAR_RANGE) {
             objectBufferX.push_back(xList);
             objectBufferY.push_back(yList);
         }
     }
 
     // extract information needed for obstacle object
-    for(auto const& tupleValue: boost::combine(objectBufferX, objectBufferY)) {
-        std::vector<double> xTempList,yTempList,cartesianVector;
+    for (auto const& tupleValue : boost::combine(objectBufferX, objectBufferY)) {
+        std::vector<double> xTempList, yTempList, cartesianVector;
         Obstacle obstacleValue;
 
-        boost::tie(xTempList,yTempList) = tupleValue;
-        obstacleValue.rightMostPoint = {*(xTempList.end()-1),*(yTempList.end()-1)};
-        obstacleValue.leftMostPoint =  {*xTempList.begin(),*yTempList.begin()};
-        obstacleValue.midPoint = {(*xTempList.begin()+*(xTempList.end()-1))/2, (*(yTempList.end()-1)+*yTempList.begin())/2 };
+        boost::tie(xTempList, yTempList) = tupleValue;
+        obstacleValue.rightMostPoint = { *(xTempList.end() - 1) , *(yTempList.end() - 1)};
+        obstacleValue.leftMostPoint =  { *xTempList.begin() , *yTempList.begin() };
+        obstacleValue.midPoint = {(*xTempList.begin() + *(xTempList.end() - 1))/2,
+            (*(yTempList.end() - 1) + *yTempList.begin())/2 };
 
         std::vector<double> gradiences;
         auto const tupleCombination = boost::combine(xTempList, yTempList);
-        for(auto beginIndex = tupleCombination.begin();beginIndex<tupleCombination.end()-1;beginIndex++) {
-            double x,y,nextX,nextY;
-            boost::tie(x,y) = *beginIndex;
-            boost::tie(nextX,nextY) = *(beginIndex+1);
+        for (auto beginIndex = tupleCombination.begin(); beginIndex < tupleCombination.end() - 1; beginIndex++) {
+            double x, y, nextX, nextY;
+            boost::tie(x, y) = *beginIndex;
+            boost::tie(nextX, nextY) = *(beginIndex+1);
 
             double gradience;
-            if ((nextX-x)==0) gradience = 9999;
-            else gradience = (nextY-y)/(nextX-x);
-            if (gradience>9999) gradience = 9999;
+            if ((nextX-x) == 0)
+                gradience = 9999;
+            else
+                gradience = (nextY - y) / (nextX - x);
+            if (gradience > 9999) gradience = 9999;
             gradiences.push_back(gradience);
         }
 
-        obstacleValue.largestGrad = *std::max_element(gradiences.begin(),gradiences.end());
-        obstacleValue.smallestGrad = *std::min_element(gradiences.begin(),gradiences.end());
+        obstacleValue.largestGrad = *std::max_element(gradiences.begin(), gradiences.end());
+        obstacleValue.smallestGrad = *std::min_element(gradiences.begin(), gradiences.end());
 
         obstacleList.push_back(obstacleValue);
     }
@@ -129,16 +132,16 @@ void Xingyun::processNormalHuman(std::vector<Obstacle> queue) {
     std::vector<double> centroid;
     centroid.push_back((queue[0].midPoint[0] + queue[1].midPoint[0]) / 2);
     centroid.push_back((queue[0].midPoint[1] + queue[1].midPoint[1]) / 2);
-    
+
     // Calculate orientation angle
     double orientationAngle = atan((queue[0].midPoint[1] - queue[1].midPoint[1]) / (queue[0].midPoint[0] - queue[1].midPoint[0]));
-    
+
     // Create Human object and add it to humanList
     Human human;
     human.centroid = centroid;
     human.orientationAngle = orientationAngle;
     humanList.push_back(human);
-    return ;
+    return;
 }
 
 
@@ -148,7 +151,7 @@ void Xingyun::processNormalHuman(std::vector<Obstacle> queue) {
 void Xingyun::processSidewaysHuman(std::vector<Obstacle> queue) {
     // Calculate orientation angle directly from leg coordinates
     double orientation = atan(queue[0].midPoint[1] / queue[0].midPoint[0]);
-    
+
     // Approximate human centroid from midpoints of legs
     std::vector<double> centroid;
     centroid.push_back(queue[0].midPoint[0] + (LEG_DISTANCE/2)*cos(orientation));
@@ -159,13 +162,13 @@ void Xingyun::processSidewaysHuman(std::vector<Obstacle> queue) {
     human.centroid = centroid;
     human.orientationAngle = orientation;
     humanList.push_back(human);
-    return ;
+    return;
 }
 
 
 /** @brief Recognize humans from legs. */
 void Xingyun::humanRecognition() {
-    std::vector<Obstacle> queue,legListTemp;    // 2-element inspection queue for leg pairs
+    std::vector<Obstacle> queue, legListTemp;    // 2-element inspection queue for leg pairs
     legListTemp = legList;
     while (legListTemp.empty() == false) {
         // Pop first element of legList into the inspeaction queue
@@ -174,13 +177,13 @@ void Xingyun::humanRecognition() {
         legListTemp.erase(legListTemp.begin());
         // Load up queue to two elements, unless legList is empty, in which case process the 1-element queue as a sideways human
         if (queue.size() < 2) {
-            if (legListTemp.empty() == false)
+            if (legListTemp.empty() == false) {
                 continue;
-            else {
+            } else {
                 processSidewaysHuman(queue);
                 queue.pop_back();
                 continue;
-            }   
+            }
         }
 
         // Calculate distance between legs in queue
@@ -192,15 +195,11 @@ void Xingyun::humanRecognition() {
             processNormalHuman(queue);
             queue.pop_back();
             queue.pop_back();
-        }
-
-        // If legs are far apart, process the first leg as a sideways human and pop it out of the queue
-        else {
+        } else {  // If legs are far apart, process the first leg as a sideways human and pop it out of the queue
             // Create temporary queue to hold the first leg
             std::vector<Obstacle> temp;
             temp.push_back(queue.front());
             queue.erase(queue.begin());
-
             processSidewaysHuman(temp);
         }
     }
@@ -213,33 +212,32 @@ void Xingyun::humanRecognition() {
  * @return humanList - The detected human list.
  */
 std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
-
     // load lidar data from csv file to vector rawLidarDistances
     std::ifstream fileStream(lidarDatasetFilename);
     std::string item;
-    while(std::getline(fileStream, item,',')) {
+    while (std::getline(fileStream, item, ',')) {
         double value;
         std::stringstream readString;
         readString << item;
         readString >> value;
         rawLidarDistances.push_back(value);
     }
-    if(rawLidarDistances.size()!=512) {
-        std::cout<<"didn't read file right: "<<rawLidarDistances.size()<<std::endl;
+    if (rawLidarDistances.size() != 512) {
+        std::cout << "didn't read file right: " << rawLidarDistances.size() << std::endl;
     }
-    //get polar data from raw lidar data
-    std::vector<double> angles; // vector with 100 ints.
-    for (int i : boost::irange(0,512)) {angles.push_back((-120+i*240/512)*M_PI/180);}
+    // get polar data from raw lidar data
+    std::vector<double> angles;  // vector with 100 ints.
+    for (int i : boost::irange(0, 512)) {angles.push_back((-120 + i * 240 / 512) * M_PI / 180);}
 
     pointCloudPolar.push_back(rawLidarDistances);
     pointCloudPolar.push_back(angles);
 
-    //converte polar coordinates to cartesian coordinates
-    std::vector<double> xValues,yValues;
+    // converte polar coordinates to cartesian coordinates
+    std::vector<double> xValues, yValues;
 
-    for(auto const& tupleValue: boost::combine(rawLidarDistances, angles)) {
-        double distance,angle;
-        boost::tie(distance,angle) = tupleValue;
+    for (auto const& tupleValue : boost::combine(rawLidarDistances, angles)) {
+        double distance, angle;
+        boost::tie(distance, angle) = tupleValue;
         xValues.push_back(distance * cos(angle));
         yValues.push_back(distance * sin(angle));
     }
@@ -256,11 +254,11 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 
 /** @brief Show the output map. */
 void Xingyun::visualization() {
-   plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
-   double humanWidth = 0.8;  // Human width, adjust here.
-   double humanThick = 0.3;  // Human thickness, adjust here.
-   for (auto human : humanList) {
-           plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
+    plt::plot({ 0 }, { 0 }, "bs");  // Show robot as square at origin.
+    double humanWidth = 0.8;  // Human width, adjust here.
+    double humanThick = 0.3;  // Human thickness, adjust here.
+    for (auto human : humanList) {
+           plt::plot({ human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
            double orientation = human.orientationAngle;  // Human orientation radians, x-axis (pointing to the right) is 0 radians
            int n = 500;
            std::vector<double> x(n), y(n);
@@ -272,11 +270,11 @@ void Xingyun::visualization() {
                        + humanWidth * sin(t) * cos(orientation) + human.centroid[1];
            }
            plt::plot(x, y, "r-");  // Plot human as ellipse.
-   }
-   plt::xlim(-4, 4);
-   plt::ylim(-4, 4);
-   plt::show();
-   return;
+    }
+    plt::xlim(-4, 4);
+    plt::ylim(-4, 4);
+    plt::show();
+    return;
 }
 
 
