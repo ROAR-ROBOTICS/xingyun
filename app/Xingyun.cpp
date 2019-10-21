@@ -112,6 +112,7 @@ void Xingyun::obstacleClassification() {
 	return;
 }
 
+
 /** @brief Recognize legs among obstacles. */
 void Xingyun::legRecognition() {
     double obstacleLength = 0;   // Length of obstacle contour
@@ -131,10 +132,45 @@ void Xingyun::legRecognition() {
     }
 }
 
+
+/** @brief Supporting function to humanRecognition() to process humans where both legs are visible
+ *  @param queue 2-element inspection queue for leg pairs
+*/
+void processNormalHuman(std::vector<Obstacle> queue) {
+    return;
+}
+
+
+/** @brief Supporting function to humanRecognition() to process humans where only one leg is visible
+ *  @param queue 2-element inspection queue for leg pairs
+*/
+void processSidewaysHuman(std::vector<Obstacle> queue) {
+    return;
+}
+
+
 /** @brief Recognize humans from legs. */
 void Xingyun::humanRecognition() {
-  return;
+    std::vector<Obstacle> queue;    // 2-element inspection queue for leg pairs
+
+    while (legList.empty() == false) {
+
+        // Pop first element of legList into the inspeaction queue
+        queue.push_back(legList.front());
+        legList.pop_front();
+
+        // Load up queue to two elements, unless legList is empty
+        if (queue.size() != 2) {
+            if (legList.empty() == false)
+                continue;
+        }
+
+
+    }
+
+    
 }
+
 
 /**
  * @brief Main function to detect human.
@@ -179,70 +215,77 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	return humanList;
 }
 
+
 /** @brief Show the output map. */
 void Xingyun::visualization() {
-  plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
-  double humanWidth = 0.8;  // Human width, adjust here.
-  double humanThick = 0.3;  // Human thickness, adjust here.
-  for (auto human : humanList) {
-    plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
-    double orientation = human.orientationAngle;  // Human orientation in degree, x axis(pointing to the right) is 0 degree.
-    int n = 500;
-    std::vector<double> x(n), y(n);
-    for (int i = 0; i < n; ++i) {
-      double t = 2 * M_PI * i / n;
-      x.at(i) = humanThick * cos(t) * cos(orientation / 180.0 * M_PI)
-              - humanWidth * sin(t) * sin(orientation / 180.0 * M_PI) + human.centroid[0];
-      y.at(i) = humanThick * cos(t) * sin(orientation / 180.0 * M_PI)
-              + humanWidth * sin(t) * cos(orientation / 180.0 * M_PI) + human.centroid[1];
+    plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
+    double humanWidth = 0.8;  // Human width, adjust here.
+    double humanThick = 0.3;  // Human thickness, adjust here.
+    for (auto human : humanList) {
+            plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
+            double orientation = human.orientationAngle;  // Human orientation in degree, x axis(pointing to the right) is 0 degree.
+            int n = 500;
+            std::vector<double> x(n), y(n);
+            for (int i = 0; i < n; ++i) {
+                double t = 2 * M_PI * i / n;
+                x.at(i) = humanThick * cos(t) * cos(orientation / 180.0 * M_PI)
+                        - humanWidth * sin(t) * sin(orientation / 180.0 * M_PI) + human.centroid[0];
+                y.at(i) = humanThick * cos(t) * sin(orientation / 180.0 * M_PI)
+                        + humanWidth * sin(t) * cos(orientation / 180.0 * M_PI) + human.centroid[1];
+            }
+            plt::plot(x, y, "r-");  // Plot human as ellipse.
     }
-    plt::plot(x, y, "r-");  // Plot human as ellipse.
-  }
-  plt::xlim(-4, 4);
-  plt::ylim(-4, 4);
-  plt::show();
-  return;
+    plt::xlim(-4, 4);
+    plt::ylim(-4, 4);
+    plt::show();
+    return;
 }
+
 
 /** @brief Get rawLidarDistances.
  *  @return rawLidarDistances - Raw data.
  */
 std::vector<double> Xingyun::getRawLidarDistances() {
-  return rawLidarDistances;
+    return rawLidarDistances;
 }
+
 
 /** @brief Get pointCloudPolar.
  *  @return pointCloudPolar - Converted data in Polar coordinate.
  */
 std::vector<std::vector<double>> Xingyun::getPointCloudPolar() {
-  return pointCloudPolar;
+    return pointCloudPolar;
 }
+
 
 /** @brief Get pointCloudCartesian.
  *  @return pointCloudCartesian - Converted data in Cartesian coordinate.
  */
 std::vector<std::vector<double>> Xingyun::getPointCloudCartesian() {
-  return pointCloudCartesian;
+    return pointCloudCartesian;
 }
+
 
 /** @brief Get obstacleList.
  *  @return obstacleList - List of obstacles.
  */
 std::vector<Obstacle> Xingyun::getObstacleList() {
-  return obstacleList;
+    return obstacleList;
 }
+
 
 /** @brief Get legList.
  *  @return legList - List of legs.
  */
 std::vector<Obstacle> Xingyun::getLegList() {
-  return legList;
+    return legList;
 }
+
 
 /** @brief Get humanList.
  *  @return humanList - List of humans.
  */
 std::vector<Human> Xingyun::getHumanList() {
-  return humanList;
+    return humanList;
 }
 
