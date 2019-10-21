@@ -20,6 +20,7 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
+#include <matplotlibcpp.h>
 
 namespace plt = matplotlibcpp;
 
@@ -38,7 +39,7 @@ void Xingyun::obstacleClassification() {
 	std::vector<double> xList,yList,distanceList;
 	std::vector<std::vector<double>> objectBufferX,objectBufferY;
 	std::vector<std::vector<std::vector<double>>> objects;
-	
+
 	// point cloud classification
 	for(auto const& tupleValue: boost::combine(rawLidarDistances,pointCloudCartesian[0],pointCloudCartesian[1])) {
 		double distance, x, y;
@@ -90,6 +91,7 @@ void Xingyun::obstacleClassification() {
 			if (gradience>9999) gradience = 9999;
 			gradiences.push_back(gradience);
 		}
+
 		obstacleValue.largestGrad = *std::max_element(gradiences.begin(),gradiences.end());
 		obstacleValue.smallestGrad = *std::min_element(gradiences.begin(),gradiences.end());
 
@@ -128,12 +130,12 @@ void processNormalHuman(std::vector<Obstacle> queue) {
 
     // Calculate human centroid from midpoints of legs
     std::vector<double> centroid;
-    centroid[0] = (queue[0].midpoint[0] + queue[1].midpoint[0]) / 2;
-    centroid[1] = (queue[0].midpoint[1] + queue[1].midpoint[1]) / 2;
+    centroid[0] = (queue[0].midPoint[0] + queue[1].midPoint[0]) / 2;
+    centroid[1] = (queue[0].midPoint[1] + queue[1].midPoint[1]) / 2;
     human.centroid = centroid;
 
     // Calculate orientation angle
-    double orientationAngle = atan((queue[0].midpoint[1] - queue[1].midpoint[1]) / (queue[0].midpoint[0] - queue[1].midpoint[0]));
+    double orientationAngle = atan((queue[0].midPoint[1] - queue[1].midPoint[1]) / (queue[0].midPoint[0] - queue[1].midPoint[0]));
     human.orientationAngle = orientationAngle;
 }
 
@@ -190,11 +192,13 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	//get polar data from raw lidar data
 	std::vector<double> angles; // vector with 100 ints.
 	for (int i : boost::irange(0,512)) {angles.push_back((-120+i*240/512)*M_PI/180);}
+
 	pointCloudPolar.push_back(rawLidarDistances);
 	pointCloudPolar.push_back(angles);
 
 	//converte polar coordinates to cartesian coordinates
 	std::vector<double> xValues,yValues;
+
 	for(auto const& tupleValue: boost::combine(rawLidarDistances, angles)) {
 		double distance,angle;
 		boost::tie(distance,angle) = tupleValue;
@@ -203,7 +207,6 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	}
 	pointCloudCartesian.push_back(xValues);
 	pointCloudCartesian.push_back(yValues);
-
 	// Start classification and recognition.
 	obstacleClassification();
 	legRecognition();
