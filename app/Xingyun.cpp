@@ -125,26 +125,40 @@ void Xingyun::legRecognition() {
 /** @brief Supporting function to humanRecognition() to process humans where both legs are visible
  *  @param queue 2-element inspection queue for leg pairs
 */
-void processNormalHuman(std::vector<Obstacle> queue) {
-    Human human;
-
+void Xingyun::processNormalHuman(std::vector<Obstacle> queue) {
     // Calculate human centroid from midpoints of legs
     std::vector<double> centroid;
     centroid[0] = (queue[0].midPoint[0] + queue[1].midPoint[0]) / 2;
     centroid[1] = (queue[0].midPoint[1] + queue[1].midPoint[1]) / 2;
-    human.centroid = centroid;
-
+    
     // Calculate orientation angle
     double orientationAngle = atan((queue[0].midPoint[1] - queue[1].midPoint[1]) / (queue[0].midPoint[0] - queue[1].midPoint[0]));
+    
+    // Create Human object and add it to humanList
+    Human human;
+    human.centroid = centroid;
     human.orientationAngle = orientationAngle;
+    humanList.push_back(human);
 }
 
 
 /** @brief Supporting function to humanRecognition() to process humans where only one leg is visible
  *  @param queue 2-element inspection queue for leg pairs
 */
-void processSidewaysHuman(std::vector<Obstacle> queue) {
-    return;
+void Xingyun::processSidewaysHuman(std::vector<Obstacle> queue) {
+    // Calculate orientation angle directly from leg coordinates
+    double orientation = atan(queue[0].midPoint[1] / queue[0].midPoint[0]);
+    
+    // Approximate human centroid from midpoints of legs
+    std::vector<double> centroid;
+    centroid[0] = queue[0].midPoint[0] + (LEG_DISTANCE/2)*cos(orientation);
+    centroid[1] = queue[0].midPoint[1] + (LEG_DISTANCE/2)*sin(orientation);
+
+    // Create Human object and add it to humanList
+    Human human;
+    human.centroid = centroid;
+    human.orientationAngle = orientation;
+    humanList.push_back(human);
 }
 
 
@@ -156,18 +170,40 @@ void Xingyun::humanRecognition() {
 
         // Pop first element of legList into the inspeaction queue
         queue.push_back(legList.front());
-        legList.pop_front();
+        legList.erase(legList.begin());
 
-        // Load up queue to two elements, unless legList is empty
+        // Load up queue to two elements, unless legList is empty, in which case process the 1-element queue as a sideways human
         if (queue.size() != 2) {
             if (legList.empty() == false)
                 continue;
+            else {
+                processSidewaysHuman(queue);
+                queue.pop_back();
+                continue;
+            }   
         }
 
+        // Calculate distance between legs in queue
+        double distance = sqrt(pow(queue[0].midPoint[0] - queue[1].midPoint[0], 2)
+                            + pow(queue[0].midPoint[1] - queue[1].midPoint[1], 2));
 
+        // If the legs are close together, process the pair as a normal human then empty the queue
+        if (distance < LEG_DISTANCE) {
+            processNormalHuman(queue);
+            queue.pop_back();
+            queue.pop_back();
+        }
+
+        // If legs are far apart, process the first leg as a sideways human and pop it out of the queue
+        else {
+            // Create temporary queue to hold the first leg
+            std::vector<Obstacle> temp;
+            temp.push_back(queue.front());
+            queue.erase(queue.begin());
+
+            processSidewaysHuman(temp);
+        }
     }
-
-    
 }
 
 
