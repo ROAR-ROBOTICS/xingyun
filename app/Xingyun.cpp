@@ -124,7 +124,17 @@ void Xingyun::legRecognition() {
  *  @param queue 2-element inspection queue for leg pairs
 */
 void processNormalHuman(std::vector<Obstacle> queue) {
-    return;
+    Human human;
+
+    // Calculate human centroid from midpoints of legs
+    std::vector<double> centroid;
+    centroid[0] = (queue[0].midpoint[0] + queue[1].midpoint[0]) / 2;
+    centroid[1] = (queue[0].midpoint[1] + queue[1].midpoint[1]) / 2;
+    human.centroid = centroid;
+
+    // Calculate orientation angle
+    double orientationAngle = atan((queue[0].midpoint[1] - queue[1].midpoint[1]) / (queue[0].midpoint[0] - queue[1].midpoint[0]));
+    human.orientationAngle = orientationAngle;
 }
 
 
@@ -210,15 +220,15 @@ void Xingyun::visualization() {
     double humanThick = 0.3;  // Human thickness, adjust here.
     for (auto human : humanList) {
             plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
-            double orientation = human.orientationAngle;  // Human orientation in degree, x axis(pointing to the right) is 0 degree.
+            double orientation = human.orientationAngle;  // Human orientation radians, x-axis (pointing to the right) is 0 radians
             int n = 500;
             std::vector<double> x(n), y(n);
             for (int i = 0; i < n; ++i) {
                 double t = 2 * M_PI * i / n;
-                x.at(i) = humanThick * cos(t) * cos(orientation / 180.0 * M_PI)
-                        - humanWidth * sin(t) * sin(orientation / 180.0 * M_PI) + human.centroid[0];
-                y.at(i) = humanThick * cos(t) * sin(orientation / 180.0 * M_PI)
-                        + humanWidth * sin(t) * cos(orientation / 180.0 * M_PI) + human.centroid[1];
+                x.at(i) = humanThick * cos(t) * cos(orientation)
+                        - humanWidth * sin(t) * sin(orientation) + human.centroid[0];
+                y.at(i) = humanThick * cos(t) * sin(orientation)
+                        + humanWidth * sin(t) * cos(orientation) + human.centroid[1];
             }
             plt::plot(x, y, "r-");  // Plot human as ellipse.
     }

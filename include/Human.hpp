@@ -15,6 +15,6 @@ class Human{
   /** @brief The centroid of a possible human obstacle. */
   std::vector<double> centroid;
 
-  /** @brief The orientation angle of a possible human obstacle. */
+  /** @brief The orientation angle (in radians) of a possible human obstacle. */
   double orientationAngle;
 };
