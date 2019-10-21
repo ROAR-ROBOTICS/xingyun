@@ -20,9 +20,9 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
-#include <matplotlibcpp.h>
-
-namespace plt = matplotlibcpp;
+//#include <matplotlibcpp.h>
+//
+//namespace plt = matplotlibcpp;
 
 #define LIDAR_RANGE 3.9
 #define CLUSTER_THRESHOLD 0.5
@@ -113,7 +113,6 @@ void Xingyun::legRecognition() {
             // Calculate length of obstacle contour
             obstacleLength = sqrt(pow(obstacle.rightMostPoint[0] - obstacle.leftMostPoint[0], 2)
                                     + pow(obstacle.rightMostPoint[1] - obstacle.leftMostPoint[1], 2));
-
             // Check diameter constraint. Add obstacle to legList if it passes both constraints.
             if (obstacleLength < LEG_DIAMETER)
                 legList.push_back(obstacle);
@@ -128,8 +127,8 @@ void Xingyun::legRecognition() {
 void Xingyun::processNormalHuman(std::vector<Obstacle> queue) {
     // Calculate human centroid from midpoints of legs
     std::vector<double> centroid;
-    centroid[0] = (queue[0].midPoint[0] + queue[1].midPoint[0]) / 2;
-    centroid[1] = (queue[0].midPoint[1] + queue[1].midPoint[1]) / 2;
+    centroid.push_back((queue[0].midPoint[0] + queue[1].midPoint[0]) / 2);
+    centroid.push_back((queue[0].midPoint[1] + queue[1].midPoint[1]) / 2);
     
     // Calculate orientation angle
     double orientationAngle = atan((queue[0].midPoint[1] - queue[1].midPoint[1]) / (queue[0].midPoint[0] - queue[1].midPoint[0]));
@@ -139,6 +138,7 @@ void Xingyun::processNormalHuman(std::vector<Obstacle> queue) {
     human.centroid = centroid;
     human.orientationAngle = orientationAngle;
     humanList.push_back(human);
+    return ;
 }
 
 
@@ -151,30 +151,30 @@ void Xingyun::processSidewaysHuman(std::vector<Obstacle> queue) {
     
     // Approximate human centroid from midpoints of legs
     std::vector<double> centroid;
-    centroid[0] = queue[0].midPoint[0] + (LEG_DISTANCE/2)*cos(orientation);
-    centroid[1] = queue[0].midPoint[1] + (LEG_DISTANCE/2)*sin(orientation);
+    centroid.push_back(queue[0].midPoint[0] + (LEG_DISTANCE/2)*cos(orientation));
+    centroid.push_back(queue[0].midPoint[1] + (LEG_DISTANCE/2)*sin(orientation));
 
     // Create Human object and add it to humanList
     Human human;
     human.centroid = centroid;
     human.orientationAngle = orientation;
     humanList.push_back(human);
+    return ;
 }
 
 
 /** @brief Recognize humans from legs. */
 void Xingyun::humanRecognition() {
-    std::vector<Obstacle> queue;    // 2-element inspection queue for leg pairs
-
-    while (legList.empty() == false) {
-
+    std::vector<Obstacle> queue,legListTemp;    // 2-element inspection queue for leg pairs
+    legListTemp = legList;
+    while (legListTemp.empty() == false) {
         // Pop first element of legList into the inspeaction queue
-        queue.push_back(legList.front());
-        legList.erase(legList.begin());
+        queue.push_back(legListTemp.front());
 
+        legListTemp.erase(legListTemp.begin());
         // Load up queue to two elements, unless legList is empty, in which case process the 1-element queue as a sideways human
-        if (queue.size() != 2) {
-            if (legList.empty() == false)
+        if (queue.size() < 2) {
+            if (legListTemp.empty() == false)
                 continue;
             else {
                 processSidewaysHuman(queue);
@@ -241,41 +241,41 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 		xValues.push_back(distance * cos(angle));
 		yValues.push_back(distance * sin(angle));
 	}
-	pointCloudCartesian.push_back(xValues);
-	pointCloudCartesian.push_back(yValues);
-	// Start classification and recognition.
-	obstacleClassification();
-	legRecognition();
-	humanRecognition();
+	// pointCloudCartesian.push_back(xValues);
+	// pointCloudCartesian.push_back(yValues);
+
+	// obstacleClassification();
+	// legRecognition();
+	// humanRecognition();
 
 	return humanList;
 }
 
 
 /** @brief Show the output map. */
-void Xingyun::visualization() {
-    plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
-    double humanWidth = 0.8;  // Human width, adjust here.
-    double humanThick = 0.3;  // Human thickness, adjust here.
-    for (auto human : humanList) {
-            plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
-            double orientation = human.orientationAngle;  // Human orientation radians, x-axis (pointing to the right) is 0 radians
-            int n = 500;
-            std::vector<double> x(n), y(n);
-            for (int i = 0; i < n; ++i) {
-                double t = 2 * M_PI * i / n;
-                x.at(i) = humanThick * cos(t) * cos(orientation)
-                        - humanWidth * sin(t) * sin(orientation) + human.centroid[0];
-                y.at(i) = humanThick * cos(t) * sin(orientation)
-                        + humanWidth * sin(t) * cos(orientation) + human.centroid[1];
-            }
-            plt::plot(x, y, "r-");  // Plot human as ellipse.
-    }
-    plt::xlim(-4, 4);
-    plt::ylim(-4, 4);
-    plt::show();
-    return;
-}
+//void Xingyun::visualization() {
+//    plt::plot( { 0 }, { 0 }, "bs");  // Show robot as square at origin.
+//    double humanWidth = 0.8;  // Human width, adjust here.
+//    double humanThick = 0.3;  // Human thickness, adjust here.
+//    for (auto human : humanList) {
+//            plt::plot( { human.centroid[0] }, { human.centroid[1] }, "ro");  // Plot human centroid in map.
+//            double orientation = human.orientationAngle;  // Human orientation radians, x-axis (pointing to the right) is 0 radians
+//            int n = 500;
+//            std::vector<double> x(n), y(n);
+//            for (int i = 0; i < n; ++i) {
+//                double t = 2 * M_PI * i / n;
+//                x.at(i) = humanThick * cos(t) * cos(orientation)
+//                        - humanWidth * sin(t) * sin(orientation) + human.centroid[0];
+//                y.at(i) = humanThick * cos(t) * sin(orientation)
+//                        + humanWidth * sin(t) * cos(orientation) + human.centroid[1];
+//            }
+//            plt::plot(x, y, "r-");  // Plot human as ellipse.
+//    }
+//    plt::xlim(-4, 4);
+//    plt::ylim(-4, 4);
+//    plt::show();
+//    return;
+//}
 
 
 /** @brief Get rawLidarDistances.
