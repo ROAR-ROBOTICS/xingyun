@@ -21,8 +21,9 @@
 
 int main() {
     Xingyun xingyun;
-    std::string fileName = "../dataset/test_single.csv";
+    std::string fileName = "../dataset/demos/Case1.csv";
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
+    std::cout << "Number of humans: " << humanInfo.size() << std::endl;
     xingyun.visualization();
     return 0;
 }

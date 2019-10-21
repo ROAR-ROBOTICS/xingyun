@@ -27,7 +27,7 @@ namespace plt = matplotlibcpp;
 
 #define LIDAR_RANGE 3.9
 #define CLUSTER_THRESHOLD 0.5
-#define LEG_DIAMETER 0.2
+#define LEG_DIAMETER 0.4
 #define LEG_DISTANCE 0.3
 #define MAJOR_AXIS 0.6
 #define MINOR_AXIS 0.4
@@ -101,6 +101,8 @@ void Xingyun::obstacleClassification() {
         obstacleList.push_back(obstacleValue);
     }
 
+    std::cout << "Number of obstacles: " << obstacleList.size() << std::endl;
+
     return;
 }
 
@@ -121,6 +123,10 @@ void Xingyun::legRecognition() {
                 legList.push_back(obstacle);
         }
     }
+
+    std::cout << "Number of legs: " << legList.size() << std::endl;
+
+    return;
 }
 
 
