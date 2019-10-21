@@ -209,6 +209,13 @@ void Xingyun::humanRecognition() {
             processSidewaysHuman(temp);
         }
     }
+    
+    if (queue.empty() == false) {
+        std::vector<Obstacle> temp;
+        temp.push_back(queue.front());
+        queue.erase(queue.begin());
+        processSidewaysHuman(temp);
+    }
 }
 
 

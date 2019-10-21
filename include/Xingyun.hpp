@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <matplotlibcpp.h>
 #include <math.h>
 #include <iostream>
 #include <vector>
