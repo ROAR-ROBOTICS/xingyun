@@ -15,11 +15,11 @@
 #include <string>
 #include <boost/range/combine.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/range/irange.hpp>
 
 #include <Obstacle.hpp>
 #include <Human.hpp>
 #include <Xingyun.hpp>
-#include <matplotlibcpp.h>
 
 namespace plt = matplotlibcpp;
 
@@ -30,19 +30,6 @@ namespace plt = matplotlibcpp;
 #define MAJOR_AXIS 0.6
 #define MINOR_AXIS 0.4
 #define GRAD_DIFF_THRESHOLD 0.1
-
-/**
- * @brief The function is used to generate angles in polar coordinates
- * @param none
- * @return angle - The calculated angle for the point.
- */
-double calculateAngle() {
-	static double i=0;
-	double angle = (-120+i*240/512)*M_PI/180;
-	i++;
-	return angle;
-}
-
 
 /** @brief Read data and classify the points into obstacles. */
 void Xingyun::obstacleClassification() {
@@ -191,8 +178,8 @@ std::vector<Human> Xingyun::humanPerception(std::string lidarDatasetFilename) {
 	}
 
 	//get polar data from raw lidar data
-	std::vector<double> angles(512) ; // vector with 100 ints.
-	std::generate(angles.begin(), angles.end(), calculateAngle);
+	std::vector<double> angles; // vector with 100 ints.
+	for (int i : boost::irange(0,512)) {angles.push_back((-120+i*240/512)*M_PI/180);}
 	pointCloudPolar.push_back(rawLidarDistances);
 	pointCloudPolar.push_back(angles);
 
