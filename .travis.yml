@@ -22,10 +22,12 @@ matrix:
 
 before_install:
   - pip install --user cpp-coveralls
+  - sudo apt-get -q update
+  - sudo apt-get -y install libboost-{chrono,log,program-options,date-time,thread,system,filesystem,regex}1.58{-dev,.0}
 install:
   - sudo apt-get install -y -qq lcov
   - sudo apt-get install python-matplotlib python-numpy python2.7-dev
-  - sudo apt-get install libboost-dev
+  - sudo apt-get install libboost-all-dev -y
 script:
   - export CXX=$COMPILER;
   - mkdir build
