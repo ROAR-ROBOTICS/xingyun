@@ -45,7 +45,7 @@ void Xingyun::obstacleClassification() {
         double distance, x, y;
         boost::tie(distance, x, y) = tupleValue;
 
-        if (abs(distance - preDistance) >= CLUSTER_THRESHOLD) {
+        if (fabs(distance - preDistance) >= CLUSTER_THRESHOLD) {
             if (distanceList.size() > 0) {
                 if (distanceList[0] < LIDAR_RANGE) {
                     objectBufferX.push_back(xList);
