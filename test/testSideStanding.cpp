@@ -18,6 +18,8 @@
 #include <Obstacle.hpp>
 #include <Human.hpp>
 
+#define TOLERANCE 1
+
 /**
  * @brief test if the 1D vector is within tolerance comparing with ground truth
  * @param testingData,  which is vector used to be tested
@@ -57,7 +59,7 @@ bool testSide2DVectors(std::vector<std::vector<double>> testingData,  std::vecto
  */
 bool testSideObstacle(Obstacle groundTruth,  Obstacle testingData) {
     bool returnValue = true;
-    double tolerance = 0.01;
+    double tolerance = TOLERANCE;
 
     // test if left point is right
     if (!testSide1DVectors(testingData.leftMostPoint, groundTruth.leftMostPoint, tolerance)) {
@@ -104,7 +106,7 @@ TEST(testSideHumanPositionX,  shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     std::vector<double> midpoint = humanInfo[0].centroid;
     std::cout  <<  "Human numbers: "  <<  humanInfo.size()  <<  std::endl;
-    EXPECT_NEAR(midpoint[0],  2, 0.2);
+    EXPECT_NEAR(midpoint[0],  2, TOLERANCE);
 }
 
 /**
@@ -119,7 +121,7 @@ TEST(testSideHumanPositionY,  shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     std::vector<double> midpoint = humanInfo[0].centroid;
     std::cout  <<  "Human numbers: "  <<  humanInfo.size()  <<  std::endl;
-    EXPECT_NEAR(midpoint[1],  0, 0.2);
+    EXPECT_NEAR(midpoint[1],  0, TOLERANCE);
 }
 
 
@@ -135,7 +137,8 @@ TEST(testSideHumanPoseYaw,  shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     double orientationAngle = humanInfo[0].orientationAngle;
     std::cout  <<  "Human numbers: "  <<  humanInfo.size()  <<  std::endl;
-    EXPECT_NEAR(orientationAngle,  0, 0.2);
+    std::cout << "orientation angle: " << orientationAngle << std::endl;
+    EXPECT_NEAR(orientationAngle,  1.57, TOLERANCE);
 }
 
 
@@ -203,18 +206,18 @@ TEST(testSideLegs,  shouldPass) {
 TEST(testSidePolar,  shouldPass) {
     std::ifstream file("../dataset/unit_tests/polar_0.csv");
     if (!file) {
-        std::cout  <<  "Error,  file couldn't be opened"  <<  std::endl;
+        std::cout << "Error, file couldn't be opened" << std::endl;
     }
-    std::string readRow,  item;
+    std::string readRow, item;
     std::vector<std::vector<double>> readPolar;
 
-    while (std::getline(file,  readRow)) {
+    while (std::getline(file, readRow)) {
         std::vector<double> readVector;
         std::stringstream ss(readRow);
-        while (std::getline(ss,  item, ', ')) {
+        while (std::getline(ss, item, ',')) {
             double value;
             std::stringstream readString;
-            readString  <<  item;
+            readString << item;
             readString >> value;
             readVector.push_back(value);
         }
@@ -226,7 +229,7 @@ TEST(testSidePolar,  shouldPass) {
     std::vector<Human> humanInfo = xingyunSidePolar.humanPerception(fileName);
 
     std::vector<std::vector<double>> testingData = xingyunSidePolar.getPointCloudPolar();
-    bool testCondition = testSide2DVectors(testingData, readPolar, 0.01);
+    bool testCondition = testSide2DVectors(testingData, readPolar, TOLERANCE);
     std::cout  <<  "Human numbers: "  <<  humanInfo.size()  <<  std::endl;
     EXPECT_EQ(testCondition, true);
 }
@@ -241,18 +244,17 @@ TEST(testSidePolar,  shouldPass) {
 TEST(testSideCartisian,  shouldPass) {
     std::ifstream file("../dataset/unit_tests/cartesian_0.csv");
     if (!file) {
-        std::cout  <<  "Error,  file couldn't be opened"  <<  std::endl;
+        std::cout << "Error, file couldn't be opened" << std::endl;
     }
-    std::string readRow,  item;
+    std::string readRow, item;
     std::vector<std::vector<double>> readCartesian;
-
-    while (std::getline(file,  readRow)) {
+    while (std::getline(file, readRow)) {
         std::vector<double> readVector;
         std::stringstream ss(readRow);
-        while (std::getline(ss,  item, ', ')) {
+        while (std::getline(ss, item, ',')) {
             double value;
             std::stringstream readString;
-            readString  <<  item;
+            readString << item;
             readString >> value;
             readVector.push_back(value);
         }
@@ -265,6 +267,6 @@ TEST(testSideCartisian,  shouldPass) {
 
     std::vector<std::vector<double>> testingData = xingyunSideCartesian.getPointCloudCartesian();
     std::cout  <<  "Human numbers: "  <<  humanInfo.size()  <<  std::endl;
-    bool testCondition = testSide2DVectors(testingData, readCartesian, 0.01);
+    bool testCondition = testSide2DVectors(testingData, readCartesian, TOLERANCE);
     EXPECT_EQ(testCondition, true);
 }

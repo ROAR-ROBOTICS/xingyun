@@ -20,6 +20,8 @@
 #include <boost/range/combine.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#define TOLERANCE 1
+
 /**
  * @brief test if the 1D vector is within tolerance comparing with ground truth
  * @param testingData, which is vector used to be tested
@@ -59,7 +61,7 @@ bool test2DVectors(std::vector<std::vector<double>> testingData, std::vector<std
  */
 bool testObstacle(Obstacle groundTruth, Obstacle testingData) {
     bool returnValue = true;
-    double tolerance = 0.01;
+    double tolerance = TOLERANCE;
 
     // test if left point is right
     if (!test1DVectors(testingData.leftMostPoint, groundTruth.leftMostPoint, tolerance)) {
@@ -106,7 +108,7 @@ TEST(testFrontHumanPositionX, shouldPass) {
   std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
   std::vector<double> midpoint = humanInfo[0].centroid;
   std::cout << "Human numbers: " << humanInfo.size() << std::endl;
-  EXPECT_NEAR(midpoint[0], 2, 0.2);
+  EXPECT_NEAR(midpoint[0], 2, TOLERANCE);
 }
 
 /**
@@ -121,7 +123,7 @@ TEST(testFrontHumanPositionY, shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     std::vector<double> midpoint = humanInfo[0].centroid;
     std::cout << "Human numbers: " << humanInfo.size() << std::endl;
-    EXPECT_NEAR(midpoint[1], 0, 0.2);
+    EXPECT_NEAR(midpoint[1], 0, TOLERANCE);
 }
 
 
@@ -137,7 +139,8 @@ TEST(testFrontHumanPoseYaw, shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     double orientationAngle = humanInfo[0].orientationAngle;
     std::cout << "Human numbers: " << humanInfo.size() << std::endl;
-    EXPECT_NEAR(orientationAngle, 1.52, 0.2);
+    std::cout << "orientation angle: " << orientationAngle << std::endl;
+    EXPECT_NEAR(orientationAngle, 3.14, TOLERANCE);
 }
 
 
@@ -226,7 +229,7 @@ TEST(testPolar, shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     std::cout << "Human numbers: " << humanInfo.size() << std::endl;
     std::vector<std::vector<double>> testingData = xingyun.getPointCloudPolar();
-    bool testCondition = test2DVectors(testingData, readPolar, 0.01);
+    bool testCondition = test2DVectors(testingData, readPolar, TOLERANCE);
     EXPECT_EQ(testCondition, true);
 }
 
@@ -262,6 +265,6 @@ TEST(testCartisian, shouldPass) {
     std::vector<Human> humanInfo = xingyun.humanPerception(fileName);
     std::cout << "Human numbers: " << humanInfo.size() << std::endl;
     std::vector<std::vector<double>> testingData = xingyun.getPointCloudCartesian();
-    bool testCondition = test2DVectors(testingData, readCartesian, 0.01);
+    bool testCondition = test2DVectors(testingData, readCartesian, TOLERANCE);
     EXPECT_EQ(testCondition, true);
 }
