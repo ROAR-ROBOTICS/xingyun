@@ -36,6 +36,5 @@ TEST(testOthers, shouldPass) {
 
     std::cout << "leg data: " << leg.largestGrad << std::endl;
     std::cout << "Human numbers: " << humanInfo.size() << std::endl;
-    xingyun.visualization();
     EXPECT_EQ(1, 1);
 }
