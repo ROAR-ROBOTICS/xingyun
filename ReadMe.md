@@ -124,7 +124,7 @@ Select any of the 7 default demo files, save, and rebuild the code. Pictures tha
 
 3) If it is desired to use Xingyun as a standalone module as part of a larger project without any visualization, Matplotlib is not required. Xingyun object can be instantiated as normal and only humanPerception() is required to generate a vector of Human objects with centroid and orientation information.
 
-4) Please note that include/matplotlibcpp.h is not developed by the authors, and thus does not contain a header indicating authorship and license terms. No changes were made to the file and thus it also does not pass cppcheck and cpplint format tests.
+4) Please note that include/matplotlibcpp.h is not developed by the authors, and thus does not contain a header indicating authorship and license terms. No changes were made to the file and thus it also does not pass cppcheck and cpplint format tests. Furthermore, because the unit tests are only designed for Xingyun, having matplotlibcpp.h inside the same repository causes the coverage to be inaccurately low, yet the file is necessary for visualization.
 
 
 ## Explanation of Commit Message Format Inconsistencies
